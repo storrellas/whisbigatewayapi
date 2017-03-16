@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -63,58 +64,26 @@ public class WhisbigatewayapiApplication {
 	  return body;
 	}
     
-    public static class Agent{
-        public String getAgent_id() {
-			return agent_id;
-		}
-
-		public void setAgent_id(String agent_id) {
-			this.agent_id = agent_id;
-		}
-
+    public static class EventLogin{
+		public String event = "login";
 		public String agent_id;
     }
-        
-    @RequestMapping(value="/api/login/", method=RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public String login(HttpEntity<String> httpEntity, HttpServletRequest request) 
-    {    	
-    	log.info("Body: " + httpEntity.getBody());
-    	
 
-    	try {
-        	//create ObjectMapper instance
-        	ObjectMapper objectMapper = new ObjectMapper();
-        	//convert json string to object
-        	WhisbigatewayapiApplication.Agent agent = objectMapper.readValue(httpEntity.getBody(), WhisbigatewayapiApplication.Agent.class);
-			
-	    	log.info("Body: " + agent.agent_id);
-		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
-    	
-    	/*
-    	// Login request to LM
-    	ObjectMapper mapper = new ObjectMapper();
-    	ObjectNode login_event = mapper.createObjectNode();
-    	login_event.put("event", "login");
-    	login_event.put("agent_id", "587A179B-7097-46EC-B2E8-89D435975252");
-        RestTemplate restTemplate = new RestTemplate();      
-        String str = restTemplate.postForObject("http://localhost:8011/", login_event, String.class);
-        //log.info(str);          	    
-    	return str;        
-        /**/
-        
-    	return "ok";
-    }
+    
+	@RequestMapping(value = "/api/login/", method = RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.OK)
+	public String login(@RequestBody EventLogin event_login, HttpServletRequest request) {
+		log.info("Body: " + event_login.agent_id);
+		
+		// Login request to LM 
+		ObjectMapper mapper = new ObjectMapper();	
+		RestTemplate restTemplate = new RestTemplate(); 
+		String str = restTemplate.postForObject("http://localhost:8011/", event_login, String.class); 
+		log.info(str);
+		return str;
+	}
+    
+
     
 
     
