@@ -18,9 +18,7 @@ public class Application {
             public void addViewControllers(ViewControllerRegistry registry) {
                 // forward requests to /admin and /user to their index.html
                 registry.addViewController("/api/client/").setViewName(
-                        "forward:/client/index.html");
-                registry.addViewController("/api/client").setViewName(
-                        "forward:/client/index.html");
+                        "forward:/api/client/index.html");
             }
         };
     }
